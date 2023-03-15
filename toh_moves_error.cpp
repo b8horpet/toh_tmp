@@ -1,4 +1,4 @@
-#include "toh_tmp.hpp"
+#include "toh_tmp_moves.hpp"
 
 #if !defined(TOWER_HEIGHT)
 #error "tower height should be defined"

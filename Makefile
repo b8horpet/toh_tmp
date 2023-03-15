@@ -11,4 +11,4 @@ EXECS = $(SOURCES:%.cpp=%)
 all: $(EXECS)
 
 clean:
-	rm $(EXECS)
+	rm -fv $(EXECS)
