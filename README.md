@@ -19,7 +19,7 @@ ToH(N, A, B, C):
   ToH(N-1, B, A, C)
 ```
 
-Suppose `ToH(N, A, B, C)` solves the problem in N depth, by moving discs from A to C with the help of the B auxilary rod. If we want to move a disc at N depth, the problem can be reduced to solving the problem of N-1 depth using the auxilary rod as target first, moving the now topmost disc to the destination, and solving again for N-1 depth moving from the auxilary rod to the destination.
+Suppose `ToH(N, A, B, C)` solves the problem in N depth, by moving discs from A to C with the help of the B auxiliary rod. If we want to move a disc at N depth, the problem can be reduced to solving the problem of N-1 depth using the auxiliary rod as target first, moving the now topmost disc to the destination, and solving again for N-1 depth moving from the auxiliary rod to the destination.
 
 By this recursive statement of the solution the base case will be N=1 where only the starting rod top disc will be moved to the destination rod. This is equivalent in the above stated pseudocode base case, as N=0 it will do nothing, making N=1 only the one desired step.
 
@@ -30,6 +30,32 @@ In C++ template parameters can be types that have variable amount of numbers as 
 At the end an incomplete type is initiated with the solution moves which will print the error in the console and produce no executable. This way the proof that the computation occurs at compile time and no runtime overhead can exist is proven.
 
 The solution can easily be extended by a constexpr array of the moves in a different type which will hold the moves as data member values. These values can be initiated from the moves types for actual runtime usage, as the array is filled with the moves data in compile time. This part got removed for the brevity of the example.
+
+### Notation
+
+The rods are encoded with a name and the list of discs they are containing, from top to bottom. `Tower_t<'A', 0, 1, 2>` denotes the rod named 'A' with discs of size 0, 1, 2 making the tower. Moves are encoded as a source and destination rod name, and the size of the disc it should move (the size of the topmost disc on the source rod before the move)
+
+```
+Tower_t<'A',0,1,2>, Tower_t<'B'>, Tower_t<'C'>:
+
+    |         |         |    
+   [0]        |         |    
+  [ 1 ]       |         |    
+ [  2  ]      |         |    
+_____________________________
+    A         B         C    
+```
+After the first move `Move_t<'A','C',0>`:
+```
+Tower_t<'A',1,2>, Tower_t<'B'>, Tower_t<'C',1>:
+
+    |         |         |    
+    |         |         |    
+  [ 1 ]       |         |    
+ [  2  ]      |        [0]   
+_____________________________
+    A         B         C    
+```
 
 ## Building
 
