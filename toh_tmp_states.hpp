@@ -1,7 +1,6 @@
 #pragma once
 #include <type_traits>
 #include <utility>
-#include <array>
 
 template<int N, typename T, typename... Ts>
 struct Nth_helper
@@ -140,6 +139,18 @@ struct Tower_t<Name>
   static constexpr int height = 0;
 };
 
+template<int N, typename Tower>
+struct TNth
+{
+  static constexpr int value = TNth<N-1, typename Tower::pop>::value;
+};
+
+template<typename Tower>
+struct TNth<0, Tower>
+{
+  static constexpr int value = Tower::top;
+};
+
 template<int N>
 struct ToH_start
 {
@@ -159,89 +170,3 @@ struct ToH_start
   using moves = typename solution::moves;
 };
 
-template<char... Chs>
-struct String_t
-{
-  template<char... other>
-  constexpr static auto concat_f(String_t<other...>) -> String_t<Chs..., other...>;
-  template<typename U>
-  using concat = decltype(concat_f(U{}));
-  static constexpr std::array<char, sizeof...(Chs)> repr()
-  {
-    return {Chs...};
-  }
-};
-
-template<char C, int N>
-struct Repeat_t
-{
-  using type = typename String_t<C>::template concat<typename Repeat_t<C,N-1>::type>;
-};
-
-template<char C>
-struct Repeat_t<C,0>
-{
-  using type = String_t<>;
-};
-
-template<int N>
-using Empty_t = Repeat_t<' ',N>;
-
-template<int N>
-using Footer_t = Repeat_t<'_',N>;
-
-template<int N, char C>
-struct Row_base_t
-{
-  using type = typename Empty_t<N>::type::template concat<String_t<C>>::template concat<typename Empty_t<N>::type>;
-};
-
-template<int N, typename Tower>
-using Header_t = Row_base_t<N,Tower::name>;
-
-template<int N>
-using Row_empty_t = Row_base_t<N,'|'>;
-
-template<int N, int M>
-struct Row_disc_t
-{
-  static_assert(M<N, "too large disc");
-  using left = typename Row_base_t<N-M-1, '['>::type;
-  using right = typename Row_base_t<M,']'>::type;
-  using type = typename left::type::template concat<String_t<'|'>>::template concat<typename right::type>;
-};
-
-template<int N, int M, typename Tower>
-struct Row_t
-{
-  using type = std::conditional_t<(Tower::height-M < 0),typename Row_empty_t<N>::type, typename Row_disc_t<N,M>::type>;
-};
-
-template<typename T1, typename T2, typename T3>
-struct Merged_row_t
-{
-  using type = typename T1::type::template concat<typename T2::type>::template concat<typename T3::type>;
-};
-
-template<typename Row, typename... Rows>
-struct Table_t
-{
-  template<char Div>
-  using join = typename Row::type::template concat<String_t<Div>>::template concat<typename Table_t<Rows...>::join<Div>>;
-};
-
-template<typename Row>
-struct Table_t<Row>
-{
-  template<char Div>
-  using join = typename Row::type::template concat<String_t<Div>>;
-};
-
-template<int N, typename State>
-struct Ascii_t
-{
-  using type = typename Table_t<
-    Merged_row_t<Header_t<N,typename State::First>,Header_t<N,typename State::Second>,Header_t<N,typename State::Third>>
-  , Footer_t<6*N+3>
-  >::template join<'\n'>::template concat<String_t<'\0'>>;
-};
