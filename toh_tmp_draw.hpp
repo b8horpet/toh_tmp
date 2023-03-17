@@ -78,7 +78,7 @@ template<typename Row, typename... Rows>
 struct Table_t
 {
   template<char Div>
-  using join = typename Row::type::template concat<String_t<Div>>::template concat<typename Table_t<Rows...>::join<Div>>;
+  using join = typename Row::type::template concat<String_t<Div>>::template concat<typename Table_t<Rows...>::template join<Div>>;
 };
 
 template<typename Row>

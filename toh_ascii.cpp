@@ -19,13 +19,17 @@ using before = typename Ascii_t<tower_height,move_to_print::start_t>::type;
 using move_text = typename Move_String_t<move_to_print>::type;
 using after = typename Ascii_t<tower_height,move_to_print::end_t>::type;
 
-constexpr auto s1 = before::repr();
-constexpr auto s2 = move_text::repr();
-constexpr auto s3 = after::repr();
+constexpr auto before_s = before::repr();
+constexpr auto move_s = move_text::repr();
+constexpr auto after_s = after::repr();
 
 #include <cstdio>
 
 int main()
 {
-  printf("before:\n%s\n%s\nafter:\n%s",s1.data(),s2.data(),s3.data());
+  puts("before:");
+  puts(reinterpret_cast<const char*>(&before_s));
+  puts(reinterpret_cast<const char*>(&move_s));
+  puts("after:");
+  puts(reinterpret_cast<const char*>(&after_s));
 }
