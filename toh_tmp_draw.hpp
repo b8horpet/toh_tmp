@@ -132,3 +132,21 @@ struct Move_String_t
   >;
 };
 
+template<int N, typename Move>
+struct Move_State_t
+{
+  using type = typename Move_String_t<Move>::type::template concat<typename Ascii_t<N, typename Move::end_t>::type>;
+};
+template<int N, typename Solution>
+struct Step_by_Step_t
+{
+  template<typename... moves>
+  constexpr static auto steps_f(Moves_t<moves...>) -> Table_t<
+    Ascii_t<N, typename Nth<0, Solution>::type::start_t>,
+    //typename Move_String_t<moves>::type::template concat<typename Ascii_t<N, typename moves::end_t>::type> ...
+    Move_State_t<N, moves> ...
+  >;
+  using type = typename decltype(steps_f(std::declval<Solution>()))::template join<'\n'>;
+};
+
+
