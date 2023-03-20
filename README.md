@@ -45,7 +45,7 @@ _____________________________
 ```
 After the first move `Move_t<'A','C',0>`:
 ```
-Tower_t<'A',1,2>, Tower_t<'B'>, Tower_t<'C',1>:
+Tower_t<'A',1,2>, Tower_t<'B'>, Tower_t<'C',0>:
 
     |         |         |    
     |         |         |    
