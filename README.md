@@ -102,3 +102,5 @@ The [compilation times](./times.txt) were measured and plotted on log-scale. The
 
 ![plot](./plot.png)
 
+Number of moves generated this way is 2^N-1, which is already exponential, each move is (6N+3)\*N characters sized drawn out. This accounts for the output size scaling O(4^N). The additional p=4.? part may come from helper templates that needs calculating string parts recursively or scaling poorly due to the declarative nature of the template metaprogramming.
+
