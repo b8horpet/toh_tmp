@@ -8,7 +8,7 @@ endif
 else
 	TOWER_HEIGHT := 4
 endif
-CXXFLAGS = -std=c++17 -Wall -Wextra -Wpedantic -Werror -O3 -DTOWER_HEIGHT=$(TOWER_HEIGHT) $(MOVE_FLAG) -ftemplate-depth=10000
+CXXFLAGS = -std=c++17 -Wall -Wextra -Wpedantic -Werror -O3 -DTOWER_HEIGHT=$(TOWER_HEIGHT) $(MOVE_FLAG) -ftemplate-depth=100000
 SOURCES = $(wildcard *.cpp)
 EXECS = $(SOURCES:%.cpp=%)
 

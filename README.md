@@ -25,11 +25,9 @@ By this recursive statement of the solution the base case will be N=1 where only
 
 ## Templates
 
-In C++ template parameters can be types that have variable amount of numbers as parameters. The Towers are defined by a name (only for validation and printing purpose) and variable amount of numbers as disc sizes. The solver expects a depth, and 3 storage types as template argumants. The solver will manipulate the types based on the recursive rules we established before. The solver will initiate the end result state type, and the compiler initiates the steps required by it. The Moves are concatenated along the way in a type.
+In C++ template parameters can be types that have variable amount of numbers as parameters([variadic templates](https://en.cppreference.com/w/cpp/language/parameter_pack)). The Towers are defined by a name (only for validation and printing purpose) and variable amount of numbers as disc sizes. The solver expects a depth, and 3 storage types as template argumants. The solver will manipulate the types based on the recursive rules we established before. The solver will instantiate the end result state type, and the compiler instantiates the steps required by it. The Moves are concatenated along the way in a type.
 
-At the end an incomplete type is initiated with the solution moves which will print the error in the console and produce no executable. This way the proof that the computation occurs at compile time and no runtime overhead can exist is proven.
-
-The solution can easily be extended by a constexpr array of the moves in a different type which will hold the moves as data member values. These values can be initiated from the moves types for actual runtime usage, as the array is filled with the moves data in compile time. This part got removed for the brevity of the example.
+At the end an incomplete type is instantiated with the solution moves which will print the error in the console and produce no executable. This way the proof that the computation occurs at compile time and no runtime overhead can exist is proven.
 
 ### Notation
 
@@ -57,6 +55,8 @@ _____________________________
     A         B         C    
 ```
 
+The example was extended with an ASCII art step drawing utility, which computes the picture as a compile time type agregating the letters and creating a constexpr variable as the result containing the printable string.
+
 ## Building
 
 The `make` command will do the work.
@@ -71,15 +71,34 @@ The code works with C++17 standard, tested with clang++ version 15.0.7 and g++ v
 
 The compile time is not too bad, height=16 finishes around 8 seconds with both clang++ and g++ on my machine, which is not the latest CPU model.
 
+```bash
+make height=16 toh_moves_error
+```
+
+The drawing program is more heavy in template instantiation, and has 2 modes: drawing all the steps from start to finish with all the intermediate states included, or specifying the index of the desired step and drawing only that step with before and after state.
+
+```bash
+make height=8 move=137 toh_ascii
+```
+
+Compiling the ASCII art produces much more intermediate template classes and is generally prohibitively expensive on larger sizes. Producing all graphics for tower height 8 takes about 30 seconds, and the compilation times grow exponentially, which means a more beefy machine has only so much advantage before it is computationally infeasible.
+
 ### Example output
 
 ```
 $ make
-g++ -std=c++17 -Wall -Wextra -Wpedantic -Werror -O3 -DTOWER_HEIGHT=4    toh_tmp.cpp   -o toh_tmp
-toh_tmp.cpp:114:17: error: aggregate ‘Print<Moves_t<Move_t<'A', 'B', 0>, Move_t<'A', 'C', 1>, Move_t<'B', 'C', 0>, Move_t<'A', 'B', 2>, Move_t<'C', 'A', 0>, Move_t<'C', 'B', 1>, Move_t<'A', 'B', 0>, Move_t<'A', 'C', 3>, Move_t<'B', 'C', 0>, Move_t<'B', 'A', 1>, Move_t<'C', 'A', 0>, Move_t<'B', 'C', 2>, Move_t<'A', 'B', 0>, Move_t<'A', 'C', 1>, Move_t<'B', 'C', 0> > > as_error’ has incomplete type and cannot be defined
-  114 | Print<solution> as_error;
+g++ -std=c++17 -Wall -Wextra -Wpedantic -Werror -O3 -DTOWER_HEIGHT=4  -ftemplate-depth=100000    toh_ascii.cpp   -o toh_ascii
+g++ -std=c++17 -Wall -Wextra -Wpedantic -Werror -O3 -DTOWER_HEIGHT=4  -ftemplate-depth=100000    toh_moves_error.cpp   -o toh_moves_error
+toh_moves_error.cpp:13:17: error: aggregate ‘Print<Moves_t<Move_t<'A', 'B', 0>, Move_t<'A', 'C', 1>, Move_t<'B', 'C', 0>, Move_t<'A', 'B', 2>, Move_t<'C', 'A', 0>, Move_t<'C', 'B', 1>, Move_t<'A', 'B', 0>, Move_t<'A', 'C', 3>, Move_t<'B', 'C', 0>, Move_t<'B', 'A', 1>, Move_t<'C', 'A', 0>, Move_t<'B', 'C', 2>, Move_t<'A', 'B', 0>, Move_t<'A', 'C', 1>, Move_t<'B', 'C', 0> > > as_error’ has incomplete type and cannot be defined
+   13 | Print<solution> as_error;
       |                 ^~~~~~~~
-make: *** [<builtin>: toh_tmp] Error 1
+make: *** [<builtin>: toh_moves_error] Error 1
 $
 ```
+
+### Exponential nature
+
+The [compilation times](./times.txt) were measured and plotted on log-scale. The functions fitted were: `ax+b` on the log values of the data, and `c(d^x)+ex+f`. Both method yields around p=4.5 factor between tower height increments.
+
+![plot](./plot.png)
 
